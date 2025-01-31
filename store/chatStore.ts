@@ -9,15 +9,39 @@ type Message = {
 
 type ChatStore = {
   messages: Message[];
-  addMessage: (msg: Omit<Message, "id">) => void;
+  say: (text: string) => void;
   resetChat: () => void;
 };
 
 export const useChatStore = create<ChatStore>((set) => ({
   messages: [],
-  addMessage: (msg) =>
+
+  say: (text) => {
     set((state) => ({
-      messages: [...state.messages, { id: crypto.randomUUID(), ...msg }],
-    })),
+      messages: [
+        ...state.messages,
+        { id: crypto.randomUUID(), role: "user", text },
+      ],
+    }));
+
+    // Simulated AI response
+    setTimeout(() => {
+      set((state) => ({
+        messages: [
+          ...state.messages,
+          {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            text: "Would you like more details?",
+            buttons: [
+              { label: "Yes", value: "yes" },
+              { label: "No", value: "no" },
+            ],
+          },
+        ],
+      }));
+    }, 500);
+  },
+
   resetChat: () => set({ messages: [] }),
 }));
