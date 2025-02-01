@@ -19,6 +19,12 @@ export async function GET() {
     body: JSON.stringify({
       model: "gpt-4o-mini-realtime-preview-2024-12-17", // Change model here
       voice: "verse", // Change voice here
+      modalities: ["audio", "text"],
+      instructions:
+        "You are an expert support agent, you talk in English and Estonian and provide helpful funny concise answers.",
+      input_audio_transcription: {
+        model: "whisper-1",
+      },
     }),
   });
 

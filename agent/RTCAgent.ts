@@ -1,10 +1,26 @@
 // Build according to https://platform.openai.com/docs/guides/realtime-webrtc
 
-type ClientEvent = {
+export type ClientEvent = {
   type: string;
   response: {
     modalities: string[];
     instructions: string;
+  };
+};
+
+export type IncomingEvent = {
+  event_id: string;
+  response_id: string;
+  type: string;
+  item_id?: string;
+  transcript?: string;
+  delta?: string;
+  item?: {
+    id: string;
+    object: string;
+    role: "user" | "assistant";
+    status: string;
+    type: string;
   };
 };
 
@@ -14,6 +30,7 @@ export abstract class RTCAgent {
   private connection?: RTCPeerConnection;
   private audioElement?: HTMLAudioElement;
   private dataChannel?: RTCDataChannel;
+  private micTrack?: MediaStreamTrack;
 
   public async init() {
     // Get an ephemeral key from your server - see server code below
@@ -32,11 +49,12 @@ export abstract class RTCAgent {
     this.connection.ontrack = (e) =>
       (this.audioElement!.srcObject = e.streams[0]);
 
-    // Add local audio track for microphone input in the browser
+    // Add local audio track for microphone input
     const ms = await navigator.mediaDevices.getUserMedia({
       audio: true,
     });
-    this.connection.addTrack(ms.getTracks()[0]);
+    this.micTrack = ms.getAudioTracks()[0]; // Store the mic track
+    this.connection.addTrack(this.micTrack);
 
     // Set up data channel for sending and receiving events
     this.dataChannel = this.connection.createDataChannel("oai-events");
@@ -67,7 +85,7 @@ export abstract class RTCAgent {
     this.onMessage(JSON.parse(e.data));
   }
 
-  public abstract onMessage(data: object): void;
+  public abstract onMessage(data: IncomingEvent): void;
 
   public send(event: ClientEvent) {
     this.dataChannel?.send(JSON.stringify(event));
@@ -77,5 +95,16 @@ export abstract class RTCAgent {
     this.dataChannel?.close();
     this.connection?.close();
     this.audioElement?.remove();
+    this.micTrack?.stop(); // Ensure the mic is turned off when closing
+  }
+
+  public setMicrophone(enabled: boolean) {
+    if (!this.micTrack) return;
+    this.micTrack.enabled = enabled;
+  }
+
+  public get microphoneEnabled(): boolean {
+    if (!this.micTrack) return false;
+    return this.micTrack.enabled;
   }
 }

@@ -14,6 +14,7 @@ type ChatStore = {
   resetChat: () => void;
 };
 
+/** Zustand Store */
 export const useChatStore = create<ChatStore>((set) => ({
   messages: [
     {
@@ -71,3 +72,38 @@ export const useChatStore = create<ChatStore>((set) => ({
       ],
     }),
 }));
+
+/** Standalone functions for external use */
+export const createMessage = (msg: Message): string => {
+  useChatStore.setState((state) => {
+    const exists = state.messages.some((m) => m.id === msg.id);
+    if (exists) return state; // If message exists, do nothing
+
+    return {
+      messages: [...state.messages, msg],
+    };
+  });
+
+  return msg.id;
+};
+
+export const setMessageText = (id: string, text: string) => {
+  useChatStore.setState((state) => ({
+    messages: state.messages.map((msg) =>
+      msg.id === id ? { ...msg, text } : msg
+    ),
+  }));
+};
+
+export const appendToMessage = (id: string, text: string) => {
+  useChatStore.setState((state) => ({
+    messages: state.messages.map((msg) =>
+      msg.id === id ? { ...msg, text: msg.text + text } : msg
+    ),
+  }));
+};
+
+/** Make AI agent globally accessible */
+if (typeof window !== "undefined") {
+  (window as any).agent = new SupportAgent();
+}

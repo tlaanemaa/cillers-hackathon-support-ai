@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import clsx from "clsx";
 import { useChatStore } from "@/store/chatStore";
 import Button from "./Button";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type MessageProps = {
   id: string;
@@ -27,7 +29,11 @@ const Message = ({ id, role, text, buttons }: MessageProps) => {
           : "bg-chat-assistant text-text-light mr-auto"
       )}
     >
-      <div className="flex-1">{text}</div> {/* Message content */}
+      {/* Render Markdown */}
+      <div className="flex-1 markdown">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+      </div>
+
       {buttons && (
         <div className="mt-3 flex justify-between gap-3">
           {buttons.map((btn) => (

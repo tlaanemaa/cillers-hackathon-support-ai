@@ -15,7 +15,7 @@ const ChatPage = () => {
   useEffect(() => {
     const handleScroll = () => {
       const isUserAtBottom =
-        window.innerHeight + window.scrollY >= document.body.offsetHeight - 10;
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
       setIsAtBottom(isUserAtBottom);
     };
 
