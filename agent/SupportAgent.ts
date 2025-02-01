@@ -2,7 +2,8 @@ import {
   upsertMessage,
   appendToMessage,
   setMessageText,
-  resetChat
+  resetChat,
+  setChatOn
 } from "@/store/chatStore";
 import { RTCAgent, IncomingEvent } from "./RTCAgent";
 
@@ -12,6 +13,17 @@ class SupportAgent extends RTCAgent {
       id: crypto.randomUUID(),
       role: "user",
       text,
+    });
+  }
+
+  public onReady(): void {
+    // Add a welcome message when the agent is ready
+    resetChat();
+    setChatOn(true);
+    upsertMessage({
+      id: crypto.randomUUID(),
+      role: "assistant",
+      text: "Hello! How can I help you?",
     });
   }
 

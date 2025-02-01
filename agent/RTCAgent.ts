@@ -78,6 +78,9 @@ export abstract class RTCAgent {
       type: "answer",
       sdp: await sdpResponse.text(),
     });
+
+    // Notify the subclass that the connection is ready
+    this.onReady();
   }
 
   private handleMessage(e: MessageEvent) {
@@ -85,6 +88,7 @@ export abstract class RTCAgent {
     this.onMessage(JSON.parse(e.data));
   }
 
+  public abstract onReady(): void;
   public abstract onMessage(data: IncomingEvent): void;
 
   public send(event: ClientEvent) {

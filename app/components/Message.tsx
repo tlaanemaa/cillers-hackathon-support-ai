@@ -5,6 +5,7 @@ import { supportAgent } from "@/agent/SupportAgent";
 import Button from "./Button";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import TypingIndicator from "./TypingIndicator";
 
 type MessageProps = {
   id: string;
@@ -29,7 +30,11 @@ const Message = ({ id, role, text, buttons }: MessageProps) => {
     >
       {/* Render Markdown */}
       <div className="flex-1 markdown">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+        {text === "..." ? (
+          <TypingIndicator />
+        ) : (
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+        )}
       </div>
 
       {buttons && (

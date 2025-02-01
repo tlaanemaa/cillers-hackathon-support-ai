@@ -10,13 +10,14 @@ const hasContent = (message: ConversationMessage) => {
 };
 
 const ChatMessages = () => {
-  const { messages } = useChatStore();
+  const { messages, chatOn } = useChatStore();
 
   return (
     <div className="space-y-4">
-      {messages.filter(hasContent).map((msg) => (
-        <Message key={msg.id} {...msg} />
-      ))}
+      {chatOn &&
+        messages
+          .filter(hasContent)
+          .map((msg) => <Message key={msg.id} {...msg} />)}
     </div>
   );
 };

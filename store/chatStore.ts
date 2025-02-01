@@ -8,15 +8,18 @@ export type Message = {
 };
 
 type ChatStore = {
+  chatOn: boolean;
   messages: Message[];
   upsertMessage: (message: Message) => void;
   setMessageText: (id: string, text: string) => void;
   appendMessageText: (id: string, text: string) => void;
   resetChat: () => void;
+  setChatOn: (chatOn: boolean) => void;
 };
 
 /** Zustand Store */
 export const useChatStore = create<ChatStore>((set) => ({
+  chatOn: false,
   messages: [],
 
   upsertMessage(msg) {
@@ -52,21 +55,10 @@ export const useChatStore = create<ChatStore>((set) => ({
 
   resetChat: () =>
     set({
-      messages: [
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          text: "Hello! How can I help you?",
-          buttons: [
-            {
-              label: "Enable Voice Chat",
-              value: "enable-voice",
-              color: "#ff85a2",
-            },
-          ],
-        },
-      ],
+      messages: [],
     }),
+
+  setChatOn: (chatOn) => set({ chatOn }),
 }));
 
 /** Standalone functions for external use */
@@ -80,3 +72,6 @@ export const appendToMessage = (id: string, text: string) =>
   useChatStore.getState().appendMessageText(id, text);
 
 export const resetChat = () => useChatStore.getState().resetChat();
+
+export const setChatOn = (chatOn: boolean) =>
+  useChatStore.getState().setChatOn(chatOn);

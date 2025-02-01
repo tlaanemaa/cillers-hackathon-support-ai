@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useChatStore } from "@/store/chatStore";
 import { supportAgent } from "@/agent/SupportAgent";
 import Button from "./Button";
+import { motion } from "framer-motion";
 
 const ChatInput = () => {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const { chatOn } = useChatStore();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -34,7 +37,12 @@ const ChatInput = () => {
   };
 
   return (
-    <div className="fixed bottom-6 left-0 w-full px-chatPadding flex justify-center">
+    <motion.div
+      initial={{ y: 150 }}
+      animate={{ y: chatOn ? 0 : 150 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="fixed bottom-6 left-0 w-full px-chatPadding flex justify-center"
+    >
       <div className="flex w-full max-w-3xl bg-input p-3 shadow-stronger rounded-full items-center">
         <input
           ref={inputRef}
@@ -47,7 +55,7 @@ const ChatInput = () => {
         />
         <Button label="Send" onClick={handleSend} />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
