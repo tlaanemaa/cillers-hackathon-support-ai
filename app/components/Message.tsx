@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import clsx from "clsx";
-import { useChatStore } from "@/store/chatStore";
+import { supportAgent } from "@/agent/SupportAgent";
 import Button from "./Button";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -14,8 +14,6 @@ type MessageProps = {
 };
 
 const Message = ({ id, role, text, buttons }: MessageProps) => {
-  const { say } = useChatStore();
-
   return (
     <motion.div
       key={id}
@@ -41,7 +39,7 @@ const Message = ({ id, role, text, buttons }: MessageProps) => {
               key={btn.value}
               label={btn.label}
               color={btn.color}
-              onClick={() => say(btn.value)}
+              onClick={() => supportAgent.sayTo(btn.value)}
               fill
             />
           ))}

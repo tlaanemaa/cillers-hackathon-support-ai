@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useChatStore } from "@/store/chatStore";
+import { supportAgent } from "@/agent/SupportAgent";
 import Button from "./Button";
 
 const ChatInput = () => {
-  const { say } = useChatStore();
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -25,7 +24,7 @@ const ChatInput = () => {
 
   const handleSend = () => {
     if (!input.trim()) return;
-    say(input);
+    supportAgent.sayTo(input);
     setInput("");
 
     // Keep focus on input after sending a message

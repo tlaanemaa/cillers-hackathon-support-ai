@@ -1,17 +1,27 @@
 import {
-  createMessage,
+  upsertMessage,
   appendToMessage,
   setMessageText,
+  resetChat
 } from "@/store/chatStore";
 import { RTCAgent, IncomingEvent } from "./RTCAgent";
 
-export class SupportAgent extends RTCAgent {
+class SupportAgent extends RTCAgent {
+  sayTo(text: string) {
+    upsertMessage({
+      id: crypto.randomUUID(),
+      role: "user",
+      text,
+    });
+  }
+
   onMessage(event: IncomingEvent) {
-    console.log(event.type, event);
+    console.debug(event.type, event);
 
     switch (event.type) {
       case "input_audio_buffer.speech_started":
-        createMessage({
+        // Add a message as soon as the user starts speaking
+        upsertMessage({
           id: event.item_id!,
           role: "user",
           text: "...",
@@ -19,25 +29,29 @@ export class SupportAgent extends RTCAgent {
         break;
 
       case "conversation.item.created":
-        createMessage({
+        // Update messages with data from the API
+        upsertMessage({
           id: event.item!.id,
           role: event.item!.role,
-          text: "",
+          text: "...",
         });
         break;
 
       case "conversation.item.input_audio_transcription.completed":
       case "response.audio_transcript.done":
-        setMessageText(event.item_id!, event.transcript! || "🤷");
+        // Update the message with the final transcript
+        setMessageText(event.item_id!, event.transcript!);
         break;
 
       case "response.audio_transcript.delta":
+        // Append the transcription delta to the message
         appendToMessage(event.item_id!, event.delta!);
-
-      case "response.audio_transcript.done":
 
       default:
       // Do nothing
     }
   }
 }
+
+// Singleton instance of the support agent
+export const supportAgent = new SupportAgent();
