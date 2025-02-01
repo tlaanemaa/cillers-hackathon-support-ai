@@ -10,14 +10,28 @@ const ChatInput = () => {
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.focus(); // Auto-focus only on initial page load
+      inputRef.current.focus(); // Auto-focus on page load
     }
-  }, []); // Runs only on mount
+
+    const handleTypingIntent = (e: KeyboardEvent) => {
+      if (document.activeElement !== inputRef.current) {
+        inputRef.current?.focus(); // Focus input on any key press
+      }
+    };
+
+    window.addEventListener("keydown", handleTypingIntent);
+    return () => window.removeEventListener("keydown", handleTypingIntent);
+  }, []);
 
   const handleSend = () => {
     if (!input.trim()) return;
     say(input);
     setInput("");
+
+    // Keep focus on input after sending a message
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   return (
@@ -32,7 +46,7 @@ const ChatInput = () => {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
-        <Button label="Send" onClick={handleSend} color="#8a79ff" />
+        <Button label="Send" onClick={handleSend} />
       </div>
     </div>
   );
