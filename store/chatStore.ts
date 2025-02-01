@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { SupportAgent } from "@/agent/SupportAgent";
 
 type Message = {
   id: string;
@@ -60,7 +61,11 @@ export const useChatStore = create<ChatStore>((set) => ({
           role: "assistant",
           text: "Hello! How can I help you?",
           buttons: [
-            { label: "Enable Voice Chat", value: "enable-voice", color: "#ff85a2" },
+            {
+              label: "Enable Voice Chat",
+              value: "enable-voice",
+              color: "#ff85a2",
+            },
           ],
         },
       ],
