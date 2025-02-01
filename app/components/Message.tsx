@@ -21,21 +21,22 @@ const Message = ({ id, role, text, buttons }: MessageProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className={clsx(
-        "max-w-[80%] p-5 rounded-2xl shadow-subtle text-2xl leading-relaxed font-semibold",
+        "max-w-[80%] w-fit p-5 rounded-2xl shadow-subtle text-2xl leading-relaxed font-semibold flex flex-col",
         role === "user"
           ? "bg-chat-user text-text-light ml-auto"
           : "bg-chat-assistant text-text-light mr-auto"
       )}
     >
-      {text}
+      <div className="flex-1">{text}</div> {/* Message content */}
       {buttons && (
-        <div className="mt-3 flex gap-3">
+        <div className="mt-3 flex justify-between gap-3">
           {buttons.map((btn) => (
             <Button
               key={btn.value}
               label={btn.label}
               color={btn.color}
               onClick={() => say(btn.value)}
+              fill
             />
           ))}
         </div>
