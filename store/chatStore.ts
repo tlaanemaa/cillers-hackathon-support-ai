@@ -1,47 +1,77 @@
 import { create } from "zustand";
 
-type Message = {
+export type Message = {
   id: string;
   role: "user" | "assistant";
   text: string;
-  buttons?: { label: string; value: string }[];
+  buttons?: { label: string; value: string; color?: string }[];
 };
 
 type ChatStore = {
+  chatOn: boolean;
   messages: Message[];
-  say: (text: string) => void;
+  upsertMessage: (message: Message) => void;
+  setMessageText: (id: string, text: string) => void;
+  appendMessageText: (id: string, text: string) => void;
   resetChat: () => void;
+  setChatOn: (chatOn: boolean) => void;
 };
 
+/** Zustand Store */
 export const useChatStore = create<ChatStore>((set) => ({
+  chatOn: false,
   messages: [],
 
-  say: (text) => {
-    set((state) => ({
-      messages: [
-        ...state.messages,
-        { id: crypto.randomUUID(), role: "user", text },
-      ],
-    }));
+  upsertMessage(msg) {
+    set((state) => {
+      for (let i = 0; i < state.messages.length; i++) {
+        if (state.messages[i].id === msg.id) {
+          state.messages[i] = { ...state.messages[i], ...msg };
+          return state;
+        }
+      }
 
-    // Simulated AI response
-    setTimeout(() => {
-      set((state) => ({
-        messages: [
-          ...state.messages,
-          {
-            id: crypto.randomUUID(),
-            role: "assistant",
-            text: "Would you like more details?",
-            buttons: [
-              { label: "Yes", value: "yes" },
-              { label: "No", value: "no" },
-            ],
-          },
-        ],
-      }));
-    }, 500);
+      return {
+        messages: [...state.messages, msg],
+      };
+    });
   },
 
-  resetChat: () => set({ messages: [] }),
+  setMessageText(id, text) {
+    set((state) => ({
+      messages: state.messages.map((msg) =>
+        msg.id === id ? { ...msg, text } : msg
+      ),
+    }));
+  },
+
+  appendMessageText(id, text) {
+    set((state) => ({
+      messages: state.messages.map((msg) =>
+        msg.id === id ? { ...msg, text: msg.text + text } : msg
+      ),
+    }));
+  },
+
+  resetChat: () =>
+    set({
+      messages: [],
+    }),
+
+  setChatOn: (chatOn) => set({ chatOn }),
 }));
+
+/** Standalone functions for external use */
+export const upsertMessage = (msg: Message) =>
+  useChatStore.getState().upsertMessage(msg);
+
+export const setMessageText = (id: string, text: string) =>
+  useChatStore.getState().setMessageText(id, text);
+
+export const appendToMessage = (id: string, text: string) =>
+  useChatStore.getState().appendMessageText(id, text);
+
+export const resetChat = () => useChatStore.getState().resetChat();
+
+export const setChatOn = (chatOn: boolean) =>
+  useChatStore.getState().setChatOn(chatOn);

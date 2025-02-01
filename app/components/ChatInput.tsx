@@ -1,36 +1,61 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChatStore } from "@/store/chatStore";
+import { supportAgent } from "@/agent/SupportAgent";
+import Button from "./Button";
+import { motion } from "framer-motion";
 
 const ChatInput = () => {
-  const { say } = useChatStore();
   const [input, setInput] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { chatOn } = useChatStore();
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus(); // Auto-focus on page load
+    }
+
+    const handleTypingIntent = () => {
+      if (document.activeElement !== inputRef.current) {
+        inputRef.current?.focus(); // Focus input on any key press
+      }
+    };
+
+    window.addEventListener("keydown", handleTypingIntent);
+    return () => window.removeEventListener("keydown", handleTypingIntent);
+  }, []);
 
   const handleSend = () => {
     if (!input.trim()) return;
-    say(input);
+    supportAgent.sayTo(input);
     setInput("");
+
+    // Keep focus on input after sending a message
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   return (
-    <div className="fixed bottom-6 left-0 w-full px-chatPadding flex justify-center">
+    <motion.div
+      initial={{ y: 150 }}
+      animate={{ y: chatOn ? 0 : 150 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="fixed bottom-6 left-0 w-full px-chatPadding flex justify-center"
+    >
       <div className="flex w-full max-w-3xl bg-input p-3 shadow-stronger rounded-full items-center">
         <input
+          ref={inputRef}
           type="text"
-          className="flex-1 min-w-0 px-6 py-3 bg-transparent text-2xl text-white outline-none placeholder-text-muted font-semibold"
+          className="flex-1 px-6 py-3 bg-transparent text-2xl text-white outline-none placeholder-text-muted font-semibold"
           placeholder="Type something..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
-        <button
-          onClick={handleSend}
-          className="flex-shrink-0 px-6 py-3 bg-button text-white rounded-full hover:bg-button-hover transition shadow-subtle text-2xl font-semibold"
-        >
-          Send
-        </button>
+        <Button label="Send" onClick={handleSend} />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
