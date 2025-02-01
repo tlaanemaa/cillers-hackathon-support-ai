@@ -13,7 +13,7 @@ const ChatInput = () => {
       inputRef.current.focus(); // Auto-focus on page load
     }
 
-    const handleTypingIntent = (e: KeyboardEvent) => {
+    const handleTypingIntent = () => {
       if (document.activeElement !== inputRef.current) {
         inputRef.current?.focus(); // Focus input on any key press
       }

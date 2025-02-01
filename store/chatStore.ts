@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { SupportAgent } from "@/agent/SupportAgent";
 
-type Message = {
+export type Message = {
   id: string;
   role: "user" | "assistant";
   text: string;
