@@ -14,6 +14,7 @@ export type IncomingEvent = {
   type: string;
   item_id?: string;
   transcript?: string;
+  text?: string;
   delta?: string;
   item?: {
     id: string;
@@ -80,7 +81,7 @@ export abstract class RTCAgent {
     });
 
     // Notify the subclass that the connection is ready
-    this.onReady();
+    this.dataChannel.onopen = () => this.onReady();
   }
 
   private handleMessage(e: MessageEvent) {

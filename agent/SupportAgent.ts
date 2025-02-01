@@ -3,7 +3,7 @@ import {
   appendToMessage,
   setMessageText,
   resetChat,
-  setChatOn
+  setChatOn,
 } from "@/store/chatStore";
 import { RTCAgent, IncomingEvent } from "./RTCAgent";
 
@@ -14,16 +14,25 @@ class SupportAgent extends RTCAgent {
       role: "user",
       text,
     });
+    this.send({
+      type: "response.create",
+      response: {
+        modalities: ["text", "audio"],
+        instructions: text,
+      },
+    });
   }
 
   public onReady(): void {
     // Add a welcome message when the agent is ready
     resetChat();
     setChatOn(true);
-    upsertMessage({
-      id: crypto.randomUUID(),
-      role: "assistant",
-      text: "Hello! How can I help you?",
+    this.send({
+      type: "response.create",
+      response: {
+        modalities: ["text", "audio"],
+        instructions: "Ask me what I need help with, be polite and welcoming and friendly.",
+      },
     });
   }
 
@@ -55,9 +64,16 @@ class SupportAgent extends RTCAgent {
         setMessageText(event.item_id!, event.transcript!);
         break;
 
+      case "response.text.done":
+        // Update the message with the final response
+        setMessageText(event.item_id!, event.text!);
+        break;
+
+      case "response.text.delta":
       case "response.audio_transcript.delta":
         // Append the transcription delta to the message
         appendToMessage(event.item_id!, event.delta!);
+        break;
 
       default:
       // Do nothing
