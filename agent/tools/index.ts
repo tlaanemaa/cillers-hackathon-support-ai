@@ -1,6 +1,6 @@
-import { TestTool } from "./TestTool";
+import { Recolor } from "./Recolor";
 
 export const TOOLS = [
   // Add your tools here
-  new TestTool(),
+  new Recolor(),
 ];

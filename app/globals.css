@@ -8,6 +8,30 @@ body {
   @apply bg-background text-text font-sans text-xl leading-relaxed;
 }
 
+:root {
+  /* Background Colors */
+  --color-background: #1e1325;
+  --color-background-dark: #2c1a38;
+  --color-gradient-start: #2a1a3d;
+  --color-gradient-end: #22102c;
+
+  /* Chat Bubbles */
+  --color-chat-user: #4d2a6d;
+  --color-chat-assistant: #7d3c58;
+
+  /* Text Colors */
+  --color-text: #e8daef;
+  --color-text-light: #fde7ef;
+  --color-text-muted: #c9a4c5;
+
+  /* Buttons */
+  --color-button: #955678;
+  --color-button-hover: #a06585;
+
+  /* Input */
+  --color-input: #3a214a;
+}
+
 .markdown h1 {
   font-size: 1.8rem;
   font-weight: bold;
