@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { TOOLS } from "@/agent/tools";
 
 // https://platform.openai.com/docs/guides/realtime-webrtc
 
@@ -27,6 +28,7 @@ export async function GET() {
       input_audio_transcription: {
         model: "whisper-1",
       },
+      tools: TOOLS.map((tool) => tool.toJSON()),
     }),
   });
 

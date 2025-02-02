@@ -1,7 +1,10 @@
 import { chatStore } from "@/store/chatStore";
 import { RTCAgent, IncomingEvent } from "./RTCAgent";
+import { TOOLS } from "./tools";
 
 class SupportAgent extends RTCAgent {
+  public readonly tools = TOOLS;
+
   sayTo(text: string) {
     chatStore().upsertMessage({
       id: crypto.randomUUID(),
@@ -21,8 +24,6 @@ class SupportAgent extends RTCAgent {
   }
 
   onMessage(event: IncomingEvent) {
-    console.debug(event.type, event);
-
     switch (event.type) {
       case "input_audio_buffer.speech_started":
         // Add a message as soon as the user starts speaking

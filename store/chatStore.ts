@@ -21,7 +21,7 @@ type ChatStore = {
 
 /** Zustand Store */
 export const useChatStore = create<ChatStore>((set) => ({
-  chatOn: true,
+  chatOn: false,
   messages: [],
   microphoneOn: true,
 

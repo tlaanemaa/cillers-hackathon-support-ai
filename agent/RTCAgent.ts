@@ -1,5 +1,7 @@
 // Build according to https://platform.openai.com/docs/guides/realtime-webrtc
 
+import { Tool } from "./tools/Tool";
+
 export type ClientEvent = {
   type: string;
   response?: {
@@ -24,6 +26,20 @@ export type IncomingEvent = {
     status: string;
     type: string;
   };
+  response?: {
+    output: any[];
+  };
+};
+
+// https://platform.openai.com/docs/guides/realtime-model-capabilities#detect-when-the-model-wants-to-call-a-function
+export type ToolCall = {
+  object: string;
+  id: string;
+  type: string;
+  status: string;
+  name: string;
+  call_id: string;
+  arguments: string;
 };
 
 export abstract class RTCAgent {
@@ -34,6 +50,7 @@ export abstract class RTCAgent {
   private dataChannel?: RTCDataChannel;
   private micTrack?: MediaStreamTrack;
   public isReady = false;
+  public readonly tools: Tool[] = [];
 
   public async init() {
     // Get an ephemeral key from your server - see server code below
@@ -84,14 +101,54 @@ export abstract class RTCAgent {
   }
 
   private handleMessage(e: MessageEvent) {
-    const event = JSON.parse(e.data);
-    // Realtime server events appear here!
+    // Realtime events will come here
+    const event: IncomingEvent = JSON.parse(e.data);
+    console.debug(">>> ", event.type, "\n", event);
+
+    // Handle sessions start
     if (!this.isReady && event.type === "session.created") {
       this.isReady = true;
-      this.onReady();
+      return this.onReady();
     }
 
+    // Handle tool calls
+    if (event.type === "response.done") {
+      const output = event?.response?.output ?? [];
+      output
+        .filter((x) => x.type === "function_call")
+        .map((call) => this.handleToolCall(call));
+    }
+
+    // Handle incoming messages
     this.onMessage(event);
+  }
+
+  private async handleToolCall(toolCall: ToolCall) {
+    const tool = this.tools.find((t) => t.name === toolCall.name);
+
+    try {
+      if (!tool) throw new Error(`Tool not found: ${toolCall.name}`);
+      const args = JSON.parse(toolCall.arguments);
+      const result = await tool.run(args);
+      this.send({
+        type: "conversation.item.create",
+        item: {
+          type: "function_call_output",
+          call_id: toolCall.call_id,
+          output: JSON.stringify(result),
+        },
+      });
+    } catch (e) {
+      console.error("Error running tool:", e);
+      this.send({
+        type: "conversation.item.create",
+        item: {
+          type: "function_call_output",
+          call_id: toolCall.call_id,
+          output: JSON.stringify(e instanceof Error ? e.message : String(e)),
+        },
+      });
+    }
   }
 
   /**
