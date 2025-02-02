@@ -103,7 +103,7 @@ export abstract class RTCAgent {
   private handleMessage(e: MessageEvent) {
     // Realtime events will come here
     const event: IncomingEvent = JSON.parse(e.data);
-    console.debug(">>> ", event.type, "\n", event);
+    console.debug("💬 ", event.type, "\n", event);
 
     // Handle sessions start
     if (!this.isReady && event.type === "session.created") {
@@ -124,6 +124,7 @@ export abstract class RTCAgent {
   }
 
   private async handleToolCall(toolCall: ToolCall) {
+    console.debug("🛠️ Tool call:\n", toolCall);
     const tool = this.tools.find((t) => t.name === toolCall.name);
 
     try {

@@ -1,9 +1,9 @@
 import { Tool } from "./Tool";
 
 export class Recolor extends Tool {
-  public readonly name = "Recolor";
+  public readonly name = "theme-colors";
   public readonly description =
-    "Modify theme colors of the application dynamically.";
+    "Modify theme colors of the application.";
   public readonly arguments = {
     background: {
       type: "string",
@@ -29,7 +29,7 @@ export class Recolor extends Tool {
       type: "string",
       description: "Changes the color of assistant chat bubbles.",
     },
-    "text-default": {
+    text: {
       type: "string",
       description: "Changes the default text color.",
     },
@@ -41,7 +41,7 @@ export class Recolor extends Tool {
       type: "string",
       description: "Changes the muted text color.",
     },
-    "button-default": {
+    button: {
       type: "string",
       description: "Changes the default button color.",
     },

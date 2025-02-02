@@ -39,7 +39,7 @@ class SupportAgent extends RTCAgent {
         chatStore().upsertMessage({
           id: event.item!.id,
           role: event.item!.role,
-          text: "...",
+          text: "",
         });
         break;
 

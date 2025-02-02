@@ -1,3 +1,4 @@
+import { text } from "stream/consumers";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -14,6 +15,7 @@ export default {
           dark: "var(--color-background-dark)",
           gradientStart: "var(--color-gradient-start)",
           gradientEnd: "var(--color-gradient-end)",
+          text: "var(--color-text)",
         },
         chat: {
           user: "var(--color-chat-user)",
