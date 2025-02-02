@@ -1,4 +1,4 @@
-// tailwind.config.ts
+import { text } from "stream/consumers";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -11,31 +11,30 @@ export default {
     extend: {
       colors: {
         background: {
-          DEFAULT: "#1e1325",
-          dark: "#2c1a38",
-          gradientStart: "#2a1a3d", // Rich deep purple
-          gradientEnd: "#22102c", // Slightly darker purple
+          DEFAULT: "var(--color-background)",
+          dark: "var(--color-background-dark)",
+          gradientStart: "var(--color-gradient-start)",
+          gradientEnd: "var(--color-gradient-end)",
+          text: "var(--color-text)",
         },
         chat: {
-          user: "#4d2a6d",
-          assistant: "#7d3c58",
+          user: "var(--color-chat-user)",
+          assistant: "var(--color-chat-assistant)",
         },
         text: {
-          DEFAULT: "#e8daef",
-          light: "#fde7ef",
-          muted: "#c9a4c5",
+          DEFAULT: "var(--color-text)",
+          light: "var(--color-text-light)",
+          muted: "var(--color-text-muted)",
         },
         button: {
-          DEFAULT: "#955678",
-          hover: "#a06585",
+          DEFAULT: "var(--color-button)",
+          hover: "var(--color-button-hover)",
         },
-        input: {
-          DEFAULT: "#3a214a",
-        },
+        input: "var(--color-input)",
       },
       boxShadow: {
         subtle: "0px 2px 10px rgba(0, 0, 0, 0.15)",
-        stronger: "0px 6px 18px rgba(0, 0, 0, 0.35)", // More pronounced shadow
+        stronger: "0px 6px 18px rgba(0, 0, 0, 0.35)",
       },
       fontFamily: {
         sans: ["Quicksand", "sans-serif"],

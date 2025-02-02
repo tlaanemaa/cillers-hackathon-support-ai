@@ -24,8 +24,8 @@ const Message = ({ id, role, text, buttons }: MessageProps) => {
       className={clsx(
         "max-w-[80%] w-fit p-5 rounded-2xl shadow-subtle text-2xl leading-relaxed font-semibold flex flex-col",
         role === "user"
-          ? "bg-chat-user text-text-light ml-auto"
-          : "bg-chat-assistant text-text-light mr-auto"
+          ? "bg-chat-user ml-auto"
+          : "bg-chat-assistant mr-auto"
       )}
     >
       {/* Render Markdown */}

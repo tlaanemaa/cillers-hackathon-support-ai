@@ -9,18 +9,21 @@ export type Message = {
 
 type ChatStore = {
   chatOn: boolean;
+  microphoneOn: boolean;
   messages: Message[];
   upsertMessage: (message: Message) => void;
   setMessageText: (id: string, text: string) => void;
   appendMessageText: (id: string, text: string) => void;
   resetChat: () => void;
   setChatOn: (chatOn: boolean) => void;
+  setMicrophoneOn: (microphoneOn: boolean) => void;
 };
 
 /** Zustand Store */
 export const useChatStore = create<ChatStore>((set) => ({
   chatOn: false,
   messages: [],
+  microphoneOn: true,
 
   upsertMessage(msg) {
     set((state) => {
@@ -59,19 +62,7 @@ export const useChatStore = create<ChatStore>((set) => ({
     }),
 
   setChatOn: (chatOn) => set({ chatOn }),
+  setMicrophoneOn: (microphoneOn) => set({ microphoneOn }),
 }));
 
-/** Standalone functions for external use */
-export const upsertMessage = (msg: Message) =>
-  useChatStore.getState().upsertMessage(msg);
-
-export const setMessageText = (id: string, text: string) =>
-  useChatStore.getState().setMessageText(id, text);
-
-export const appendToMessage = (id: string, text: string) =>
-  useChatStore.getState().appendMessageText(id, text);
-
-export const resetChat = () => useChatStore.getState().resetChat();
-
-export const setChatOn = (chatOn: boolean) =>
-  useChatStore.getState().setChatOn(chatOn);
+export const chatStore = () => useChatStore.getState();

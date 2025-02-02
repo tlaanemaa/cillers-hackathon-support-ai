@@ -1,11 +1,14 @@
 // Build according to https://platform.openai.com/docs/guides/realtime-webrtc
 
+import { Tool } from "./tools/Tool";
+
 export type ClientEvent = {
   type: string;
-  response: {
+  response?: {
     modalities: string[];
-    instructions: string;
+    instructions?: string;
   };
+  item?: any;
 };
 
 export type IncomingEvent = {
@@ -23,6 +26,20 @@ export type IncomingEvent = {
     status: string;
     type: string;
   };
+  response?: {
+    output: any[];
+  };
+};
+
+// https://platform.openai.com/docs/guides/realtime-model-capabilities#detect-when-the-model-wants-to-call-a-function
+export type ToolCall = {
+  object: string;
+  id: string;
+  type: string;
+  status: string;
+  name: string;
+  call_id: string;
+  arguments: string;
 };
 
 export abstract class RTCAgent {
@@ -32,6 +49,8 @@ export abstract class RTCAgent {
   private audioElement?: HTMLAudioElement;
   private dataChannel?: RTCDataChannel;
   private micTrack?: MediaStreamTrack;
+  public isReady = false;
+  public readonly tools: Tool[] = [];
 
   public async init() {
     // Get an ephemeral key from your server - see server code below
@@ -79,23 +98,104 @@ export abstract class RTCAgent {
       type: "answer",
       sdp: await sdpResponse.text(),
     });
-
-    // Notify the subclass that the connection is ready
-    this.dataChannel.onopen = () => this.onReady();
   }
 
   private handleMessage(e: MessageEvent) {
-    // Realtime server events appear here!
-    this.onMessage(JSON.parse(e.data));
+    // Realtime events will come here
+    const event: IncomingEvent = JSON.parse(e.data);
+    console.debug("💬 ", event.type, "\n", event);
+
+    // Handle sessions start
+    if (!this.isReady && event.type === "session.created") {
+      this.isReady = true;
+      return this.onReady();
+    }
+
+    // Handle tool calls
+    if (event.type === "response.done") {
+      const output = event?.response?.output ?? [];
+      output
+        .filter((x) => x.type === "function_call")
+        .map((call) => this.handleToolCall(call));
+    }
+
+    // Handle incoming messages
+    this.onMessage(event);
   }
 
+  private async handleToolCall(toolCall: ToolCall) {
+    console.debug("🛠️ Tool call:\n", toolCall);
+    const tool = this.tools.find((t) => t.name === toolCall.name);
+
+    try {
+      if (!tool) throw new Error(`Tool not found: ${toolCall.name}`);
+      const args = JSON.parse(toolCall.arguments);
+      const result = await tool.run(args);
+      this.send({
+        type: "conversation.item.create",
+        item: {
+          type: "function_call_output",
+          call_id: toolCall.call_id,
+          output: JSON.stringify(result) || "Done!",
+        },
+      });
+    } catch (e) {
+      console.error("Error running tool:", e);
+      this.send({
+        type: "conversation.item.create",
+        item: {
+          type: "function_call_output",
+          call_id: toolCall.call_id,
+          output: JSON.stringify(e instanceof Error ? e.message : String(e)),
+        },
+      });
+    }
+  }
+
+  /**
+   * Called when the agent is ready to receive messages
+   */
   public abstract onReady(): void;
+
+  /**
+   * Called when a message is received from the OpenAI API
+   */
   public abstract onMessage(data: IncomingEvent): void;
 
+  /**
+   * Send an event to the OpenAI API
+   */
   public send(event: ClientEvent) {
     this.dataChannel?.send(JSON.stringify(event));
   }
 
+  /**
+   * Send a text message to the OpenAI API
+   */
+  public sendText(text: string, modalities = ["text", "audio"]) {
+    this.send({
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text,
+          },
+        ],
+      },
+    });
+
+    this.send({
+      type: "response.create",
+      response: { modalities },
+    });
+  }
+
+  /**
+   * Close the connection and clean up resources
+   */
   public close() {
     this.dataChannel?.close();
     this.connection?.close();
@@ -103,11 +203,17 @@ export abstract class RTCAgent {
     this.micTrack?.stop(); // Ensure the mic is turned off when closing
   }
 
+  /**
+   * Enable or disable the microphone
+   */
   public setMicrophone(enabled: boolean) {
     if (!this.micTrack) return;
     this.micTrack.enabled = enabled;
   }
 
+  /**
+   * Get the current microphone status
+   */
   public get microphoneEnabled(): boolean {
     if (!this.micTrack) return false;
     return this.micTrack.enabled;

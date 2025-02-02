@@ -11,7 +11,7 @@ const TypingIndicator = () => {
       {[...Array(3)].map((_, i) => (
         <motion.span
           key={i}
-          className="w-2 h-2 bg-gray-300 rounded-full"
+          className="w-2 h-2 bg-text rounded-full"
           animate={{ opacity: [0.3, 1, 0.3] }}
           transition={{
             duration: 1,
