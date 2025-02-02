@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import clsx from "clsx";
 
 type ButtonProps = {
-  label: string;
+  label: string | React.ReactNode;
   onClick: () => void;
   color?: string;
   fill?: boolean;

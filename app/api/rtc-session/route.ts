@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+// https://platform.openai.com/docs/guides/realtime-webrtc
+
 export async function GET() {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 

@@ -4,11 +4,12 @@ import { useChatStore } from "@/store/chatStore";
 import { supportAgent } from "@/agent/SupportAgent";
 import Button from "./Button";
 import { motion } from "framer-motion";
+import { IoMic, IoMicOff } from "react-icons/io5"; // Mic Icons
 
 const ChatInput = () => {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const { chatOn } = useChatStore();
+  const { chatOn, microphoneOn } = useChatStore();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -43,17 +44,26 @@ const ChatInput = () => {
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="fixed bottom-6 left-0 w-full px-chatPadding flex justify-center"
     >
-      <div className="flex w-full max-w-3xl bg-input p-3 shadow-stronger rounded-full items-center">
+      <div className="flex w-full max-w-3xl bg-input p-3 shadow-stronger rounded-full items-stretch gap-1">
+        {/* Input Field */}
         <input
           ref={inputRef}
           type="text"
-          className="flex-1 px-6 py-3 bg-transparent text-2xl text-white outline-none placeholder-text-muted font-semibold"
+          className="flex-1 px-6 bg-transparent text-2xl text-white outline-none placeholder-text-muted font-semibold"
           placeholder="Type something..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
+
+        {/* Send Button */}
         <Button label="Send" onClick={handleSend} />
+
+        {/* Mute Button Styled Like the Send Button */}
+        <Button
+          label={microphoneOn ? <IoMic /> : <IoMicOff />}
+          onClick={() => supportAgent.toggleMicrophone()}
+        />
       </div>
     </motion.div>
   );

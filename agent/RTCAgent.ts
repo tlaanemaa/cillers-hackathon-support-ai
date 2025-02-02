@@ -2,10 +2,11 @@
 
 export type ClientEvent = {
   type: string;
-  response: {
+  response?: {
     modalities: string[];
-    instructions: string;
+    instructions?: string;
   };
+  item?: any;
 };
 
 export type IncomingEvent = {
@@ -32,6 +33,7 @@ export abstract class RTCAgent {
   private audioElement?: HTMLAudioElement;
   private dataChannel?: RTCDataChannel;
   private micTrack?: MediaStreamTrack;
+  public isReady = false;
 
   public async init() {
     // Get an ephemeral key from your server - see server code below
@@ -79,23 +81,63 @@ export abstract class RTCAgent {
       type: "answer",
       sdp: await sdpResponse.text(),
     });
-
-    // Notify the subclass that the connection is ready
-    this.dataChannel.onopen = () => this.onReady();
   }
 
   private handleMessage(e: MessageEvent) {
+    const event = JSON.parse(e.data);
     // Realtime server events appear here!
-    this.onMessage(JSON.parse(e.data));
+    if (!this.isReady && event.type === "session.created") {
+      this.isReady = true;
+      this.onReady();
+    }
+
+    this.onMessage(event);
   }
 
+  /**
+   * Called when the agent is ready to receive messages
+   */
   public abstract onReady(): void;
+
+  /**
+   * Called when a message is received from the OpenAI API
+   */
   public abstract onMessage(data: IncomingEvent): void;
 
+  /**
+   * Send an event to the OpenAI API
+   */
   public send(event: ClientEvent) {
     this.dataChannel?.send(JSON.stringify(event));
   }
 
+  /**
+   * Send a text message to the OpenAI API
+   */
+  public sendText(text: string, modalities = ["text", "audio"]) {
+    this.send({
+      type: "conversation.item.create",
+      item: {
+        type: "message",
+        role: "user",
+        content: [
+          {
+            type: "input_text",
+            text,
+          },
+        ],
+      },
+    });
+
+    this.send({
+      type: "response.create",
+      response: { modalities },
+    });
+  }
+
+  /**
+   * Close the connection and clean up resources
+   */
   public close() {
     this.dataChannel?.close();
     this.connection?.close();
@@ -103,11 +145,17 @@ export abstract class RTCAgent {
     this.micTrack?.stop(); // Ensure the mic is turned off when closing
   }
 
+  /**
+   * Enable or disable the microphone
+   */
   public setMicrophone(enabled: boolean) {
     if (!this.micTrack) return;
     this.micTrack.enabled = enabled;
   }
 
+  /**
+   * Get the current microphone status
+   */
   public get microphoneEnabled(): boolean {
     if (!this.micTrack) return false;
     return this.micTrack.enabled;
