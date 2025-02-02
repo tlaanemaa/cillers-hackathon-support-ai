@@ -2,8 +2,7 @@ import { Tool } from "./Tool";
 
 export class Recolor extends Tool {
   public readonly name = "theme-colors";
-  public readonly description =
-    "Modify theme colors of the application.";
+  public readonly description = "Modify theme colors of the application.";
   public readonly arguments = {
     background: {
       type: "string",
