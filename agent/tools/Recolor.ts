@@ -1,4 +1,4 @@
-import { Tool } from "./Tool";
+import { Tool } from "../core/Tool";
 
 export class Recolor extends Tool {
   public readonly name = "theme-colors";

@@ -28,7 +28,7 @@ const PRICING = {
   },
 };
 
-type AiModel = keyof typeof PRICING;
+export type AiModel = keyof typeof PRICING;
 
 type RTCUsage = {
   total_tokens: number;

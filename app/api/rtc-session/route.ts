@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { TOOLS } from "@/agent/tools";
+import { TOOLS, INSTRUCTIONS, MODEL, VOICE, MODALITIES } from "@/agent/config";
 
 // https://platform.openai.com/docs/guides/realtime-webrtc
 
@@ -20,11 +20,10 @@ export async function GET() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "gpt-4o-mini-realtime-preview", // Change model here
-      voice: "alloy", // Change voice here (alloy)
-      modalities: ["audio", "text"],
-      instructions:
-        "You are a friendly, solution-oriented support agent with a calm, reassuring presence, dedicated to customer satisfaction.",
+      model: MODEL,
+      voice: VOICE,
+      modalities: MODALITIES,
+      instructions: INSTRUCTIONS,
       input_audio_transcription: {
         model: "whisper-1",
       },

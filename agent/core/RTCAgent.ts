@@ -1,7 +1,7 @@
 // Build according to https://platform.openai.com/docs/guides/realtime-webrtc
 
-import { Tool } from "./tools/Tool";
-import { Usage } from "./Usage";
+import { Tool } from "./Tool";
+import { Usage, AiModel } from "./Usage";
 
 export type ClientEvent = {
   type: string;
@@ -45,7 +45,9 @@ export type ToolCall = {
 };
 
 export abstract class RTCAgent {
-  private model?: string;
+  public model?: AiModel;
+  public usage?: Usage;
+  public modalities?: string[];
   private key?: string;
   private connection?: RTCPeerConnection;
   private audioElement?: HTMLAudioElement;
@@ -53,7 +55,6 @@ export abstract class RTCAgent {
   private micTrack?: MediaStreamTrack;
   public isReady = false;
   public readonly tools: Tool[] = [];
-  public readonly usage = new Usage("gpt-4o-mini-realtime-preview");
 
   public async init() {
     // Get an ephemeral key from your server - see server code below
@@ -61,6 +62,8 @@ export abstract class RTCAgent {
     const data = await tokenResponse.json();
     this.key = data.client_secret.value;
     this.model = data.model;
+    this.usage = new Usage(data.model);
+    this.modalities = data.modalities;
     this.connection = new RTCPeerConnection();
 
     // Create a peer connection
@@ -77,6 +80,7 @@ export abstract class RTCAgent {
       audio: true,
     });
     this.micTrack = ms.getAudioTracks()[0]; // Store the mic track
+    if (!this.modalities?.includes("audio")) this.micTrack.enabled = false;
     this.connection.addTrack(this.micTrack);
 
     // Set up data channel for sending and receiving events
@@ -116,8 +120,8 @@ export abstract class RTCAgent {
 
     // Handle tool calls and track usage
     if (event.type === "response.done") {
-      this.usage.add(event.response?.usage);
-      this.usage.log();
+      this.usage?.add(event.response?.usage);
+      this.usage?.log();
       const output = event?.response?.output ?? [];
       output
         .filter((x) => x.type === "function_call")
@@ -177,7 +181,7 @@ export abstract class RTCAgent {
   /**
    * Send a text message to the OpenAI API
    */
-  public sendText(text: string, modalities = ["text", "audio"]) {
+  public sendText(text: string, modalities = this.modalities ?? ["text"]) {
     this.send({
       type: "conversation.item.create",
       item: {

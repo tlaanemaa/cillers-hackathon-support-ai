@@ -1,6 +1,6 @@
 import { chatStore } from "@/store/chatStore";
-import { RTCAgent, IncomingEvent } from "./RTCAgent";
-import { TOOLS } from "./tools";
+import { RTCAgent, IncomingEvent } from "./core/RTCAgent";
+import { TOOLS } from "./config";
 
 class SupportAgent extends RTCAgent {
   public readonly tools = TOOLS;
@@ -17,6 +17,7 @@ class SupportAgent extends RTCAgent {
   public onReady(): void {
     // Add a welcome message when the agent is ready
     chatStore().resetChat();
+    chatStore().setMicrophoneOn(this.microphoneEnabled);
     chatStore().setChatOn(true);
     this.sendText(
       "Ask me what I need help with, be polite and welcoming and friendly."
