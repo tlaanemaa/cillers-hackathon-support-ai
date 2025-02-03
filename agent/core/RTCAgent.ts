@@ -64,7 +64,6 @@ export abstract class RTCAgent {
     this.model = data.model;
     this.usage = new Usage(data.model);
     this.modalities = data.modalities;
-    this.connection = new RTCPeerConnection();
 
     // Create a peer connection
     this.connection = new RTCPeerConnection();
