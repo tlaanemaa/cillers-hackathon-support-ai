@@ -1,6 +1,7 @@
 // Build according to https://platform.openai.com/docs/guides/realtime-webrtc
 
 import { Tool } from "./tools/Tool";
+import { Usage } from "./Usage";
 
 export type ClientEvent = {
   type: string;
@@ -28,6 +29,7 @@ export type IncomingEvent = {
   };
   response?: {
     output: any[];
+    usage?: any;
   };
 };
 
@@ -51,6 +53,7 @@ export abstract class RTCAgent {
   private micTrack?: MediaStreamTrack;
   public isReady = false;
   public readonly tools: Tool[] = [];
+  public readonly usage = new Usage("gpt-4o-mini-realtime-preview");
 
   public async init() {
     // Get an ephemeral key from your server - see server code below
@@ -111,8 +114,10 @@ export abstract class RTCAgent {
       return this.onReady();
     }
 
-    // Handle tool calls
+    // Handle tool calls and track usage
     if (event.type === "response.done") {
+      this.usage.add(event.response?.usage);
+      this.usage.log();
       const output = event?.response?.output ?? [];
       output
         .filter((x) => x.type === "function_call")
