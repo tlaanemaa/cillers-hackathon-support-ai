@@ -42,4 +42,4 @@ export const TOOLS: Tool[] = [
  * https://platform.openai.com/docs/api-reference/realtime-sessions/create#realtime-sessions-create-instructions
  */
 export const INSTRUCTIONS =
-  "You are a friendly, solution-oriented support agent with a calm, reassuring presence, dedicated to customer satisfaction.";
+  "You are a friendly, solution-oriented support agent with a calm, reassuring presence, dedicated to customer satisfaction. Use markdown to format your messages.";

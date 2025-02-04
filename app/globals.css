@@ -4,14 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-background text-text font-sans text-xl leading-relaxed;
-}
-
 :root {
   /* Background Colors */
   --color-background: #1e1325;
-  --color-background-dark: #2c1a38;
   --color-gradient-start: #2a1a3d;
   --color-gradient-end: #22102c;
 
@@ -21,7 +16,6 @@ body {
 
   /* Text Colors */
   --color-text: #e8daef;
-  --color-text-light: #fde7ef;
   --color-text-muted: #c9a4c5;
 
   /* Buttons */
@@ -71,4 +65,8 @@ body {
   padding: 0;
   border-radius: 0;
   font-size: inherit;
+}
+
+.markdown img {
+  border-radius: 10px;
 }
