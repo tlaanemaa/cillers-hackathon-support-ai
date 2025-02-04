@@ -8,10 +8,6 @@ export class Recolor extends Tool {
       type: "string",
       description: "Changes the background color.",
     },
-    "background-dark": {
-      type: "string",
-      description: "Changes the dark background color.",
-    },
     "gradient-start": {
       type: "string",
       description: "Changes the start color of the background gradient.",
@@ -22,19 +18,15 @@ export class Recolor extends Tool {
     },
     "chat-user": {
       type: "string",
-      description: "Changes the color of user chat bubbles.",
+      description: "Changes the background color of user chat bubbles.",
     },
     "chat-assistant": {
       type: "string",
-      description: "Changes the color of assistant chat bubbles.",
+      description: "Changes the background color of assistant chat bubbles.",
     },
     text: {
       type: "string",
       description: "Changes the default text color.",
-    },
-    "text-light": {
-      type: "string",
-      description: "Changes the light text color.",
     },
     "text-muted": {
       type: "string",
