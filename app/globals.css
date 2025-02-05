@@ -24,6 +24,9 @@
 
   /* Input */
   --color-input: #3a214a;
+
+  /* Apply the background color to the root */
+  background-color: var(--color-background);
 }
 
 .markdown h1 {
