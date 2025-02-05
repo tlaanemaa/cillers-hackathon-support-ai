@@ -23,9 +23,7 @@ const Message = ({ id, role, text, buttons }: MessageProps) => {
       transition={{ duration: 0.5 }}
       className={clsx(
         "max-w-[80%] w-fit p-5 rounded-2xl shadow-subtle text-2xl leading-relaxed font-semibold flex flex-col",
-        role === "user"
-          ? "bg-chat-user ml-auto"
-          : "bg-chat-assistant mr-auto"
+        role === "user" ? "bg-chat-user ml-auto" : "bg-chat-assistant mr-auto"
       )}
     >
       {/* Render Markdown */}
