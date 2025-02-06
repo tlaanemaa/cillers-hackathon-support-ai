@@ -12,7 +12,11 @@ export class GetRequest extends Tool {
 
     public async run({ url }: { url: string }) {
         // Perform GET request
-        const response = await fetch(url);
-        return response.text();
+        const response = await fetch("/api/proxy", {
+            method: "POST",
+            body: JSON.stringify({ url }),
+        });
+        const data = await response.json();
+        return data.response;
     }
 }
