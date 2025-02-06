@@ -42,17 +42,21 @@ export async function POST(req: NextRequest) {
 
         // Vector search query
         const FIELD_NAME = "vector"; // Ensure this matches your index field
-        const INDEX_NAME = "cs-hackathon._default.content-index"; // Ensure this index exists
-
+        const INDEX_NAME = "cs-hackathon._default.vector"; // Ensure this index exists
         const request = SearchRequest.create(
             VectorSearch.fromVectorQuery(
                 VectorQuery.create(FIELD_NAME, embedding).numCandidates(k)
             )
         );
 
-        const result = await couchbase.cluster.search(INDEX_NAME, request);
+        const knnResult = await couchbase.cluster.search(INDEX_NAME, request);
+        const docResult = await Promise.all(knnResult.rows.map(async (row) => {
+            const document = await couchbase.collection!.get(row.id);
+            delete document.content.vector;
+            return { ...row, document: document.content };
+        }));
 
-        return NextResponse.json({ results: result.rows });
+        return NextResponse.json(docResult);
 
     } catch (error) {
         console.error("Error in KNN search:", error);
