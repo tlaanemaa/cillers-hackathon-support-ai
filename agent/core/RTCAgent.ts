@@ -59,7 +59,7 @@ export abstract class RTCAgent {
   public isReady = false;
   public readonly tools: Tool[] = [];
 
-  public async init() {
+  public async init(micOn: boolean = true) {
     // Get an ephemeral key from your server - see server code below
     const tokenResponse = await fetch("/api/rtc-session"); // API code is in ./app/api/rtc-session/route.ts
     const data = await tokenResponse.json();
@@ -82,7 +82,7 @@ export abstract class RTCAgent {
       audio: true,
     });
     this.micTrack = ms.getAudioTracks()[0]; // Store the mic track
-    if (!this.modalities?.includes("audio")) this.micTrack.enabled = false;
+    this.micTrack.enabled = micOn;
     this.connection.addTrack(this.micTrack);
 
     // Set up data channel for sending and receiving events
