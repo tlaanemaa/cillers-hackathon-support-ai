@@ -2,7 +2,7 @@ import { Tool } from "../core/Tool";
 
 export class ResizeText extends Tool {
     public readonly name = "font-size";
-    public readonly description = "Change the font size and font family of the text in the chat window, for better readability.";
+    public readonly description = "Change the font size of the text in the chat window, for better readability.";
     public readonly arguments = {
         fontSize: {
             type: "number",

@@ -1,6 +1,7 @@
 import { Tool } from "./core/Tool";
 import { Modality } from "./core/types";
 import { AiModel } from "./core/Usage";
+import { ChangeFontFamily } from "./tools/ChangeFontFamily";
 import { Recolor } from "./tools/Recolor";
 import { ResizeText } from "./tools/ResizeText";
 
@@ -37,6 +38,7 @@ export const TOOLS: Tool[] = [
   // Add your tools here
   new Recolor(),
   new ResizeText(),
+  new ChangeFontFamily(),
 ];
 
 /**

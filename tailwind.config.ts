@@ -33,7 +33,7 @@ export default {
         stronger: "0px 6px 18px rgba(0, 0, 0, 0.35)",
       },
       fontFamily: {
-        sans: ["Quicksand", "sans-serif"],
+        sans: "var(--font-family)",
       },
       fontSize: {
         xl: "calc(var(--font-size) * 0.85)",
