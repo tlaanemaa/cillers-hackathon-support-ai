@@ -4,6 +4,7 @@ import { AiModel } from "./core/Usage";
 import { ChangeFontFamily } from "./tools/ChangeFontFamily";
 import { Recolor } from "./tools/Recolor";
 import { ResizeText } from "./tools/ResizeText";
+import { SearchKnowledge } from "./tools/SearchKnowledge";
 
 /*
   All sorts of configurations for the agent
@@ -39,6 +40,7 @@ export const TOOLS: Tool[] = [
   new Recolor(),
   new ResizeText(),
   new ChangeFontFamily(),
+  new SearchKnowledge(),
 ];
 
 /**

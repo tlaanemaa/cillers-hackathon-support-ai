@@ -139,6 +139,7 @@ export abstract class RTCAgent {
       if (!tool) throw new Error(`Tool not found: ${toolCall.name}`);
       const args = JSON.parse(toolCall.arguments);
       const result = await tool.run(args);
+      console.debug("🛠️ Tool response:", toolCall.call_id, "\n", result);
       this.send({
         type: "conversation.item.create",
         item: {
