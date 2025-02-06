@@ -3,8 +3,6 @@ import { SearchRequest, VectorSearch, VectorQuery } from "couchbase";
 import couchbase from "../db";
 import OpenAI from "openai";
 
-const openai = new OpenAI();
-
 interface SearchApiRequest {
     question: string;
     k?: number;
@@ -22,6 +20,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Generate embeddings using OpenAI
+        const openai = new OpenAI();
         const embeddingResponse = await openai.embeddings.create({
             model: "text-embedding-3-small",
             input: question,
