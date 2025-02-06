@@ -42,7 +42,7 @@ export const TOOLS: Tool[] = [
   new ResizeText(),
   new ChangeFontFamily(),
   new SearchKnowledge(),
-  new GetRequest(),
+  // new GetRequest(),
 ];
 
 /**
