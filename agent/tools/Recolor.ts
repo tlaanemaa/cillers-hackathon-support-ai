@@ -2,7 +2,7 @@ import { Tool } from "../core/Tool";
 
 export class Recolor extends Tool {
   public readonly name = "theme-colors";
-  public readonly description = "Modify theme colors of the application. Ensure a high contrast, never use light on light or dark on dark colors. Never choose red or green unless specifically instructed to do so.";
+  public readonly description = "Modify theme colors of the application. Ensure a high contrast, never use light on light or dark on dark colors. Use playful, bright colors, but NEVER choose red or green unless specifically instructed to do so.";
   public readonly arguments = {
     "gradient-start": {
       type: "string",

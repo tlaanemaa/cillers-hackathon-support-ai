@@ -8,3 +8,11 @@ Content-Type: application/json
   "k": 3,
   "question": "What is the capital of France?"
 }
+
+### Request proxy
+POST http://localhost:3000/api/proxy
+Content-Type: application/json
+
+{
+  "url": "http://neti.ee"
+}

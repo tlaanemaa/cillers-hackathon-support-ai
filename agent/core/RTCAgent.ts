@@ -59,7 +59,7 @@ export abstract class RTCAgent {
   public isReady = false;
   public readonly tools: Tool[] = [];
 
-  public async init() {
+  public async init(micOn: boolean = true) {
     // Get an ephemeral key from your server - see server code below
     const tokenResponse = await fetch("/api/rtc-session"); // API code is in ./app/api/rtc-session/route.ts
     const data = await tokenResponse.json();
@@ -82,7 +82,7 @@ export abstract class RTCAgent {
       audio: true,
     });
     this.micTrack = ms.getAudioTracks()[0]; // Store the mic track
-    if (!this.modalities?.includes("audio")) this.micTrack.enabled = false;
+    this.micTrack.enabled = micOn;
     this.connection.addTrack(this.micTrack);
 
     // Set up data channel for sending and receiving events
@@ -109,7 +109,7 @@ export abstract class RTCAgent {
     });
   }
 
-  private handleMessage(e: MessageEvent) {
+  private async handleMessage(e: MessageEvent) {
     // Realtime events will come here
     const event: IncomingEvent = JSON.parse(e.data);
     console.debug("💬 ", event.type, "\n", event);
@@ -125,9 +125,16 @@ export abstract class RTCAgent {
       this.usage?.add(event.response?.usage);
       this.usage?.log();
       const output = event?.response?.output ?? [];
-      output
-        .filter((x) => x.type === "function_call")
-        .map((call) => this.handleToolCall(call));
+      const tool_calls = output.filter((x) => x.type === "function_call");
+      if (tool_calls.length > 0) {
+        await Promise.all(
+          tool_calls.map((call) => this.handleToolCall(call))
+        );
+        this.send({
+          type: "response.create",
+          response: { modalities: this.modalities ?? ["text"] },
+        });
+      }
     }
 
     // Handle incoming messages

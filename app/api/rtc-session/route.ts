@@ -24,6 +24,7 @@ export async function GET() {
       voice: VOICE,
       modalities: MODALITIES,
       instructions: INSTRUCTIONS,
+      temperature: 0.6,
       input_audio_transcription: {
         model: "whisper-1",
       },
