@@ -9,6 +9,7 @@ export type ClientEvent = {
     modalities: string[];
     instructions?: string;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   item?: any;
 };
 
@@ -28,7 +29,9 @@ export type IncomingEvent = {
     type: string;
   };
   response?: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     output: any[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     usage?: any;
   };
 };

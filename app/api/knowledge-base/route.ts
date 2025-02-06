@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
 
         const request = SearchRequest.create(
             VectorSearch.fromVectorQuery(
-                VectorQuery.create(FIELD_NAME, embedding)
+                VectorQuery.create(FIELD_NAME, embedding).numCandidates(k)
             )
         );
 
