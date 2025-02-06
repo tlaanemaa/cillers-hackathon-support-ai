@@ -36,7 +36,8 @@ export default {
         sans: ["Quicksand", "sans-serif"],
       },
       fontSize: {
-        xl: "22px",
+        xl: "calc(var(--font-size) * 0.85)",
+        "2xl": "var(--font-size)",
       },
       spacing: {
         chatPadding: "1.5rem",

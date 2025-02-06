@@ -27,6 +27,9 @@
 
   /* Apply the background color to the root */
   background-color: var(--color-background);
+
+  /* Font Size */
+  --font-size: 18px;
 }
 
 .markdown h1 {
