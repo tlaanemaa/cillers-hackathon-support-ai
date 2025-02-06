@@ -22,7 +22,7 @@ export class SearchKnowledge extends Tool {
     const data = await response.json();
 
     // Filter responses
-    const CONFIDENCE_LIMIT = 0.5;
+    const CONFIDENCE_LIMIT = 0.2;
     const content = data
       .filter((result: any) => result.score > CONFIDENCE_LIMIT)
       .map((result: any) => ({
