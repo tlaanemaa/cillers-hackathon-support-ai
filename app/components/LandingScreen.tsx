@@ -8,13 +8,9 @@ import TypingIndicator from "./TypingIndicator";
 const LandingScreen = () => {
   const [loading, setLoading] = useState(false);
 
-  const handleStartChat = async (type?: 'voice') => {
+  const handleStartChat = async (type?: "voice") => {
     setLoading(true);
-    await supportAgent.init(); // AI Agent boot-up
-
-    if (type === 'voice') {
-      supportAgent.toggleMicrophone();
-    }
+    await supportAgent.init(type === "voice"); // AI Agent boot-up
   };
 
   return (
@@ -39,7 +35,10 @@ const LandingScreen = () => {
               </p>
               <div className="flex justify-evenly mt-8">
                 <Button label="I want to write" onClick={handleStartChat} />
-                <Button label="I want to talk" onClick={() => handleStartChat('voice')} />
+                <Button
+                  label="I want to talk"
+                  onClick={() => handleStartChat("voice")}
+                />
               </div>
             </motion.div>
           ) : (
