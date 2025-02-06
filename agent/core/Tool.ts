@@ -14,7 +14,7 @@ export abstract class Tool {
    * Run the tool with the given parameters.
    * The params object passed, will have the same keys as the properties object in the parameters field.
    */
-  public abstract run(params: Record<string, string | number>): Promise<void>;
+  public abstract run(params: Record<string, string | number>): Promise<unknown>;
 
   public toJSON() {
     return {
