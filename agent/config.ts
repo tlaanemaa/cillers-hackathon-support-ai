@@ -6,6 +6,7 @@ import { GetRequest } from "./tools/GetRequest";
 import { Recolor } from "./tools/Recolor";
 import { ResizeText } from "./tools/ResizeText";
 import { SearchKnowledge } from "./tools/SearchKnowledge";
+import { IncreaseLineHeight } from "./tools/IncreaseLineHeight";
 
 /*
   All sorts of configurations for the agent
@@ -42,6 +43,7 @@ export const TOOLS: Tool[] = [
   new ResizeText(),
   new ChangeFontFamily(),
   new SearchKnowledge(),
+  new IncreaseLineHeight(),
   // new GetRequest(),
 ];
 
