@@ -8,9 +8,13 @@ import TypingIndicator from "./TypingIndicator";
 const LandingScreen = () => {
   const [loading, setLoading] = useState(false);
 
-  const handleStartChat = () => {
+  const handleStartChat = async (type?: 'voice') => {
     setLoading(true);
-    supportAgent.init(); // AI Agent boot-up
+    await supportAgent.init(); // AI Agent boot-up
+
+    if (type === 'voice') {
+      supportAgent.toggleMicrophone();
+    }
   };
 
   return (
@@ -31,10 +35,11 @@ const LandingScreen = () => {
                 Welcome to Your AI Assistant
               </h1>
               <p className="text-lg md:text-2xl text-gray-300 mt-4 max-w-xl">
-                I&apos;m here to help! Click below to start chatting.
+                I&apos;m here to help! How do you want to communicate with me?
               </p>
-              <div className="mt-8">
-                <Button label="Start Chat" onClick={handleStartChat} />
+              <div className="flex justify-evenly mt-8">
+                <Button label="I want to write" onClick={handleStartChat} />
+                <Button label="I want to talk" onClick={() => handleStartChat('voice')} />
               </div>
             </motion.div>
           ) : (
