@@ -3,9 +3,7 @@ import { SearchRequest, VectorSearch, VectorQuery } from "couchbase";
 import couchbase from "../db";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY!,
-});
+const openai = new OpenAI();
 
 interface SearchApiRequest {
     question: string;
