@@ -49,7 +49,7 @@ const ChatInput = () => {
         <input
           ref={inputRef}
           type="text"
-          className="flex-1 px-6 bg-transparent text-2xl text-text outline-none placeholder-text-muted font-semibold"
+          className="flex-1 px-6 bg-transparent text-2xl text-text outline-none placeholder-text-muted font-medium"
           placeholder="Type something..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
