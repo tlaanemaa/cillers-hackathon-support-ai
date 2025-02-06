@@ -1,0 +1,10 @@
+GET http://localhost:3000
+
+### KNN Search API
+POST http://localhost:3000/api/knowledge-base
+Content-Type: application/json
+
+{
+  "k": 3,
+  "question": "What is the capital of France?"
+}

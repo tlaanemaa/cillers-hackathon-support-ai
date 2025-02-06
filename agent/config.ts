@@ -2,8 +2,10 @@ import { Tool } from "./core/Tool";
 import { Modality } from "./core/types";
 import { AiModel } from "./core/Usage";
 import { ChangeFontFamily } from "./tools/ChangeFontFamily";
+import { GetRequest } from "./tools/GetRequest";
 import { Recolor } from "./tools/Recolor";
 import { ResizeText } from "./tools/ResizeText";
+import { SearchKnowledge } from "./tools/SearchKnowledge";
 
 /*
   All sorts of configurations for the agent
@@ -39,6 +41,8 @@ export const TOOLS: Tool[] = [
   new Recolor(),
   new ResizeText(),
   new ChangeFontFamily(),
+  new SearchKnowledge(),
+  new GetRequest(),
 ];
 
 /**
