@@ -22,7 +22,7 @@ const Message = ({ id, role, text, buttons }: MessageProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className={clsx(
-        "max-w-[80%] w-fit p-5 rounded-2xl shadow-subtle text-2xl leading-relaxed font-semibold flex flex-col",
+        "max-w-[80%] w-fit p-5 rounded-2xl shadow-subtle text-2xl leading-relaxed font-medium flex flex-col",
         role === "user" ? "bg-chat-user ml-auto" : "bg-chat-assistant mr-auto"
       )}
     >

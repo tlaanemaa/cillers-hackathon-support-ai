@@ -33,10 +33,11 @@ export default {
         stronger: "0px 6px 18px rgba(0, 0, 0, 0.35)",
       },
       fontFamily: {
-        sans: ["Quicksand", "sans-serif"],
+        sans: "var(--font-family)",
       },
       fontSize: {
-        xl: "22px",
+        xl: "calc(var(--font-size) * 0.85)",
+        "2xl": "var(--font-size)",
       },
       spacing: {
         chatPadding: "1.5rem",

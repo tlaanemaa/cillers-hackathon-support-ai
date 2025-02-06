@@ -13,7 +13,7 @@ const ChatMessages = () => {
   const { messages, chatOn } = useChatStore();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-[800px] mx-auto">
       {chatOn &&
         messages
           .filter(hasContent)

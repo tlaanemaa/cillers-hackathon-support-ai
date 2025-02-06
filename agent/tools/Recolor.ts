@@ -2,12 +2,8 @@ import { Tool } from "../core/Tool";
 
 export class Recolor extends Tool {
   public readonly name = "theme-colors";
-  public readonly description = "Modify theme colors of the application.";
+  public readonly description = "Modify theme colors of the application. Ensure a high contrast, never use light on light or dark on dark colors. Never choose red or green unless specifically instructed to do so.";
   public readonly arguments = {
-    background: {
-      type: "string",
-      description: "Changes the background color.",
-    },
     "gradient-start": {
       type: "string",
       description: "Changes the start color of the background gradient.",
@@ -18,11 +14,11 @@ export class Recolor extends Tool {
     },
     "chat-user": {
       type: "string",
-      description: "Changes the background color of user chat bubbles.",
+      description: "Changes the background color of user chat bubbles. Has to have a high contrast to background and text colors.",
     },
     "chat-assistant": {
       type: "string",
-      description: "Changes the background color of assistant chat bubbles.",
+      description: "Changes the background color of assistant chat bubbles. Has to have a high contrast to background and text colors.",
     },
     text: {
       type: "string",
@@ -34,7 +30,7 @@ export class Recolor extends Tool {
     },
     button: {
       type: "string",
-      description: "Changes the default button color.",
+      description: "Changes the default button color. Has to have a high contrast to input and text colors.",
     },
     "button-hover": {
       type: "string",
@@ -42,7 +38,7 @@ export class Recolor extends Tool {
     },
     input: {
       type: "string",
-      description: "Changes the input field background color.",
+      description: "Changes the input field background color. Has to have a high contrast to background and text colors.",
     },
   };
 
