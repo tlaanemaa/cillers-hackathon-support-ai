@@ -23,8 +23,9 @@ const CameraStream: React.FC<{ onResult: (result: string) => void }> = ({ onResu
             canvas.getContext('2d')?.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
             const dataUrl = canvas.toDataURL('image/png');
-            const result = await ocr.readText(dataUrl);
-            onResult(result);
+            const ocrResults = await ocr.readText(dataUrl);
+            const resultText = ocrResults.map(res => res.text).join(' ');
+            onResult(resultText);
         }, 1000);
 
         return () => {
