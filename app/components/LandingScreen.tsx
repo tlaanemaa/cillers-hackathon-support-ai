@@ -4,14 +4,29 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supportAgent } from "@/agent/SupportAgent";
 import Button from "./Button";
 import TypingIndicator from "./TypingIndicator";
+import CameraStream from "./CameraStream";
+import { SearchKnowledge } from "@/agent/tools/SearchKnowledge";
 
-const LandingScreen = () => {
+const LandingScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [showCamera, setShowCamera] = useState(false);
 
   const handleStartChat = async (type?: "voice") => {
     setLoading(true);
     await supportAgent.init(type === "voice"); // AI Agent boot-up
   };
+
+  const handleStartCamera = () => {
+    setShowCamera(true);
+  };
+
+  const handleCameraResult = async (result: string) => {
+    setLoading(true);
+    const searchKnowledge = new SearchKnowledge();
+    const knowledgeBaseResults = await searchKnowledge.run({ question: result });
+    console.log("Knowledge base search result: ", knowledgeBaseResults);
+      setLoading(false);
+    };
 
   return (
     <motion.div
@@ -36,10 +51,10 @@ const LandingScreen = () => {
               <div className="flex justify-evenly mt-8">
                 <Button label="I want to write" onClick={handleStartChat} />
                 <Button
-                  label="I want to talk"
-                  onClick={() => handleStartChat("voice")}
-                />
+                  label="I want to talk" onClick={() => handleStartChat("voice")} />
+                <Button label="Use camera" onClick={handleStartCamera} />
               </div>
+              {showCamera && <CameraStream onResult={handleCameraResult} />}
             </motion.div>
           ) : (
             // Spinner Transition (Smooth)
