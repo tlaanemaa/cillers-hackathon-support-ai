@@ -1,12 +1,13 @@
 import {useEffect, useRef} from 'react';
-import {EasyOCR}  from 'node-easyocr';
+import Tesseract  from 'tesseract.js';
 
 const CameraStream: React.FC<{ onResult: (result: string) => void }> = ({ onResult }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const ocr = new EasyOCR();
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         const video = videoRef.current;
         const canvas = canvasRef.current;
         if (!video || !canvas) return;
@@ -23,9 +24,17 @@ const CameraStream: React.FC<{ onResult: (result: string) => void }> = ({ onResu
             canvas.getContext('2d')?.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
             const dataUrl = canvas.toDataURL('image/png');
-            const ocrResults = await ocr.readText(dataUrl);
-            const resultText = ocrResults.map(res => res.text).join(' ');
-            onResult(resultText);
+            Tesseract.recognize(
+                dataUrl, 
+                'eng+fra+swe+spa+deu+ita+nld+por', 
+                {
+                    logger: (m) => console.log(m), 
+                }
+            ).then(({ data: { text } }) => {
+                if (text) {
+                    onResult(text);
+                }
+            });
         }, 1000);
 
         return () => {
