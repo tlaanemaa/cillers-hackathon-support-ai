@@ -1,6 +1,7 @@
 import { chatStore } from "@/store/chatStore";
 import { RTCAgent, IncomingEvent } from "./core/RTCAgent";
 import { TOOLS } from "./config";
+import { th } from "framer-motion/client";
 
 /**
  * SupportAgent extends RTCAgent to manage user interactions in a chat environment.
@@ -21,6 +22,46 @@ class SupportAgent extends RTCAgent {
     });
     this.sendText(text); // Send the text message via RTCAgent
   }
+
+  /**
+   * Sends a message with WebRTC state checking
+   * @param text The message to send
+   * @returns Promise that resolves when the message is sent
+   */
+  async safeTextSend(text: string): Promise<void> {
+    try {
+      if (!this.isReady) {
+        await this.init(false);
+        // Wait for onReady to be called
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error("Connection Timeout"));
+          }, 5000);
+          
+          const checkReady = setInterval(() => {
+            if (this.isReady) {
+              clearInterval(checkReady);
+              clearTimeout(timeout);
+              resolve();
+            }
+          }, 100);
+      });
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    if (this.isReady) {
+      this.sayTo(text);
+    } else {
+      console.error("Error in safeTextSend: WebRTC Connection not stable");
+      throw new Error("WebRTC Connection not stable");  
+    }
+  } catch (error) {
+    console.error("Error in safeTextSend sending message: ", error);
+    throw error;
+  }
+}
+
 
   /**
    * Prepares the agent when it's ready to start interacting with the user.

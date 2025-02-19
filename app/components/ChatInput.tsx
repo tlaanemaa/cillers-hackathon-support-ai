@@ -5,11 +5,21 @@ import { supportAgent } from "@/agent/SupportAgent";
 import Button from "./Button";
 import { motion } from "framer-motion";
 import { IoMic, IoMicOff } from "react-icons/io5"; // Mic Icons
+import { IoCamera, IoVideocamOff } from 'react-icons/io5'; // Camera Icons (added by me)
 
 const ChatInput = () => {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const { chatOn, microphoneOn } = useChatStore();
+  const { chatOn, microphoneOn, handleCamera } = useChatStore();
+  const [cameraOn, setCameraOn] = useState(false); // Added for camera handling (added by me)
+
+  
+  const handleCameraToggle = () => {  
+    if (handleCamera) {
+      handleCamera();
+      setCameraOn(prev => !prev);  // Toggle camera state (added by me)
+    }
+  };
 
   useEffect(() => {
     if (inputRef.current) {
@@ -31,9 +41,9 @@ const ChatInput = () => {
     supportAgent.sayTo(input);
     setInput("");
 
-    // Keep focus on input after sending a message
+    
     setTimeout(() => {
-      inputRef.current?.focus();
+      inputRef.current?.focus();  // Keep focus on input after sending a message
     }, 0);
   };
 
@@ -63,6 +73,12 @@ const ChatInput = () => {
         <Button
           label={microphoneOn ? <IoMic /> : <IoMicOff />}
           onClick={() => supportAgent.toggleMicrophone()}
+        />
+
+        {/* Camera Toggle Button */}
+        <Button
+          label={cameraOn ? <IoCamera /> : <IoVideocamOff />}
+          onClick={handleCameraToggle}
         />
       </div>
     </motion.div>

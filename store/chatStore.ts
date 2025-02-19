@@ -11,12 +11,14 @@ type ChatStore = {
   chatOn: boolean;
   microphoneOn: boolean;
   messages: Message[];
+  handleCamera: (() => void) | null; // Added for camera handling (added by me)
   upsertMessage: (message: Message) => void;
   setMessageText: (id: string, text: string) => void;
   appendMessageText: (id: string, text: string) => void;
   resetChat: () => void;
   setChatOn: (chatOn: boolean) => void;
   setMicrophoneOn: (microphoneOn: boolean) => void;
+  setHandleCamera: (handleCamera: () => void) => void; // Added for camera handling (toggle) (added by me)
 };
 
 /** Zustand Store */
@@ -24,6 +26,7 @@ export const useChatStore = create<ChatStore>((set) => ({
   chatOn: false,
   messages: [],
   microphoneOn: true,
+  handleCamera: null, // Added for camera handling (added by me)
 
   upsertMessage(msg) {
     set((state) => {
@@ -63,6 +66,7 @@ export const useChatStore = create<ChatStore>((set) => ({
 
   setChatOn: (chatOn) => set({ chatOn }),
   setMicrophoneOn: (microphoneOn) => set({ microphoneOn }),
+  setHandleCamera: (handler) => set({ handleCamera: handler }), // Added for camera handling (added by me)  
 }));
 
 export const chatStore = () => useChatStore.getState();

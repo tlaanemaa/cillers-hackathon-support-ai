@@ -1,32 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supportAgent } from "@/agent/SupportAgent";
+import { useChatStore } from "@/store/chatStore";
 import Button from "./Button";
 import TypingIndicator from "./TypingIndicator";
 import CameraStream from "./CameraStream";
-import { SearchKnowledge } from "@/agent/tools/SearchKnowledge";
 
 const LandingScreen: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false); // <boolean>   (added by me)
   const [showCamera, setShowCamera] = useState(false);
+  const { setHandleCamera } = useChatStore(); // <boolean>   (added by me)
 
-  const handleStartChat = async (type?: "voice") => {
+  const handleStartChat = async (type?: "voice"): Promise<void> => { // : Promise<void>   (added by me)
     setLoading(true);
     await supportAgent.init(type === "voice"); // AI Agent boot-up
   };
 
-  const handleStartCamera = () => {
-    setShowCamera(true);
-  };
+  const handleStartCamera = useCallback(() => { // useCallback as per eslint rule   (added by me)
+    setShowCamera(prev => !prev);  // Toggle camera state
+  }, []);
+
+  
+  useEffect(() => {   // Make camera function available to other components
+    setHandleCamera(handleStartCamera);
+  }, [setHandleCamera, handleStartCamera]);
 
   const handleCameraResult = async (result: string) => {
     setLoading(true);
-    const searchKnowledge = new SearchKnowledge();
-    const knowledgeBaseResults = await searchKnowledge.run({ question: result });
-    console.log("Knowledge base search result: ", knowledgeBaseResults);
+
+    if (!result || result.trim() === "") {
+      console.log("OCR did not detect any text from camera");
       setLoading(false);
-    };
+      return;
+    }
+
+    console.log("OCR detected text from camera: ", result);
+
+    try {
+      await supportAgent.safeTextSend(`I have this text from an image: ${result}`);
+      console.log("Message sent successfully to AI agent");
+    } catch (error) {
+      console.error('Error processing camera result:', error);
+    } finally {
+      setLoading(false);
+      setShowCamera(false);
+    }
+  };
 
   return (
     <motion.div
