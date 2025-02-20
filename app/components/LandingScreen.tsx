@@ -1,53 +1,28 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supportAgent } from "@/agent/SupportAgent";
 import { useChatStore } from "@/store/chatStore";
 import Button from "./Button";
 import TypingIndicator from "./TypingIndicator";
 import CameraStream from "./CameraStream";
+import { useCamera } from "../hooks/useCamera";
 
 const LandingScreen: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(false); // <boolean>   (added by me)
-  const [showCamera, setShowCamera] = useState(false);
-  const { setHandleCamera } = useChatStore(); // <boolean>   (added by me)
+  const [loading, setLoading] = useState<boolean>(false);
+  const { setHandleCamera } = useChatStore();
+  const {showCamera, handleCameraToggle, handleCameraResult } = useCamera();
 
-  const handleStartChat = async (type?: "voice"): Promise<void> => { // : Promise<void>   (added by me)
+  const handleStartChat = async (type?: "voice"): Promise<void> => {
     setLoading(true);
     await supportAgent.init(type === "voice"); // AI Agent boot-up
   };
-
-  const handleStartCamera = useCallback(() => { // useCallback as per eslint rule   (added by me)
-    setShowCamera(prev => !prev);  // Toggle camera state
-  }, []);
-
   
   useEffect(() => {   // Make camera function available to other components
-    setHandleCamera(handleStartCamera);
-  }, [setHandleCamera, handleStartCamera]);
+    setHandleCamera(handleCameraToggle);
+  }, [setHandleCamera, handleCameraToggle]);
 
-  const handleCameraResult = async (result: string) => {
-    setLoading(true);
-
-    if (!result || result.trim() === "") {
-      console.log("OCR did not detect any text from camera");
-      setLoading(false);
-      return;
-    }
-
-    console.log("OCR detected text from camera: ", result);
-
-    try {
-      await supportAgent.safeTextSend(`I have this text from an image: ${result}`);
-      console.log("Message sent successfully to AI agent");
-    } catch (error) {
-      console.error('Error processing camera result:', error);
-    } finally {
-      setLoading(false);
-      setShowCamera(false);
-    }
-  };
-
+  
   return (
     <motion.div
       className="fixed inset-0 flex justify-center items-center bg-background-gradientStart px-6"
@@ -72,7 +47,7 @@ const LandingScreen: React.FC = () => {
                 <Button label="I want to write" onClick={handleStartChat} />
                 <Button
                   label="I want to talk" onClick={() => handleStartChat("voice")} />
-                <Button label="Use camera" onClick={handleStartCamera} />
+                <Button label="Use camera" onClick={handleCameraToggle} />
               </div>
               {showCamera && <CameraStream onResult={handleCameraResult} />}
             </motion.div>

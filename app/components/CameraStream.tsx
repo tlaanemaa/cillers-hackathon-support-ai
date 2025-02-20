@@ -59,7 +59,7 @@ const CameraStream: React.FC<{ onResult: (result: string) => void }> = ({ onResu
           console.error('OCR Error:', error);
         }
       }
-    }, 5000);
+    }, 7000);
 
     return () => {
       clearInterval(interval);

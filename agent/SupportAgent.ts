@@ -36,7 +36,7 @@ class SupportAgent extends RTCAgent {
         await new Promise<void>((resolve, reject) => {
           const timeout = setTimeout(() => {
             reject(new Error("Connection Timeout"));
-          }, 5000);
+          }, 7000);
           
           const checkReady = setInterval(() => {
             if (this.isReady) {
