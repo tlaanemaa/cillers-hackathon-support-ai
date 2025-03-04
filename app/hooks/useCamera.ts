@@ -28,19 +28,23 @@ export const useCamera = () => {
         
         if (!searchResults || searchResults.length === 0) {
           await supportAgent.safeTextSend(
-            "I couldn't find any matching information for this image text in our knowledge base. Could you please verify the text is clear and complete? Suggest they can use the camera again, speak the text, or type it out."
+            "I couldn't find any matching information for this image text in our knowledge base. Suggest they can use the camera again, speak the text, or type it out."
           );
         } else {
           // Send results to agent without displaying in chat
           await supportAgent.safeTextSend(
-            `I've identified the following from the camera: "${result}"`
+            `I've identified the following from the camera: "${result}"` // or "I found that product! Would you like to know more about it?"
           );
           
           // Log results for debugging
           console.log("Knowledge base results:", searchResults);
         }
       } catch (error) {
-        console.error('Error processing camera result:', error);
+        console.error('Error processing camera result:', {
+          error,
+          result,
+        });
+
         await supportAgent.safeTextSend(
           "I encountered an error while searching our knowledge base."
         );
